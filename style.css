@@ -11,8 +11,8 @@ button{background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding
 .top button,.top select{font-size:13px;padding:6px 8px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
 button.p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
-.pv{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 10px}
-canvas{max-width:100%;max-height:100%;background:#000;border-radius:10px;display:block}
+.pv{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 10px}
+canvas{touch-action:none;max-width:100%;max-height:100%;background:#000;border-radius:10px;display:block}
 .ctl{display:flex;align-items:center;gap:6px;padding:6px 12px}
 #tm{font-variant-numeric:tabular-nums;color:var(--mu);font-size:13px;flex:1}
 .ic{width:40px;height:40px;border-radius:50%;padding:0;font-size:17px}
@@ -22,7 +22,7 @@ canvas{max-width:100%;max-height:100%;background:#000;border-radius:10px;display
 .rw{position:relative;height:100%}
 #phf{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--fg);z-index:5;pointer-events:none}
 .cl{position:absolute;top:10px;height:56px;border-radius:6px;overflow:hidden;display:flex;background:#222;border:2px solid transparent;cursor:pointer}
-.cl.on{border-color:var(--ac)}
+.cl.on{border-color:#fff}
 .cl i{flex:0 0 56px;height:100%;background-size:cover;background-position:center}
 .cl b{position:absolute;left:4px;bottom:2px;font:600 10px sans-serif;color:#fff;text-shadow:0 0 3px #000}
 .tx{position:absolute;top:100px;height:26px;background:var(--ac);color:#fff;border-radius:5px;padding:3px 6px;font-size:12px;overflow:hidden;white-space:nowrap;opacity:.85}
@@ -48,3 +48,18 @@ input[type=text],input[type=number],select{width:100%;background:var(--bg);borde
 .tr .g{margin:4px 0}
 .tr input{padding:4px}
 @media(min-width:900px){#sheet{left:auto;width:380px;right:12px}}
+#sb{position:absolute;border:2px solid #fff;box-shadow:0 0 0 1px #0007;pointer-events:none;z-index:6}
+#sb[hidden],#pick[hidden]{display:none}
+.bx{position:absolute;width:30px;height:30px;border-radius:50%;padding:0;background:#fff;color:#111;border:0;pointer-events:auto;font-size:15px;touch-action:none;display:flex;align-items:center;justify-content:center}
+.bx1{left:-15px;top:-15px}.bx2{left:-15px;bottom:-15px}.bx3{right:-15px;bottom:-15px}
+#pick{position:fixed;inset:0;background:#0008;z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.pk{background:var(--pn);width:100%;max-width:520px;border-radius:16px 16px 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g2 button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 8px;font-size:15px}
+.g2 span{font-size:28px;line-height:1}
+.hd{position:absolute;top:0;bottom:0;width:14px;background:#fff;z-index:2;touch-action:none;display:flex;align-items:center;justify-content:center}
+.hd::after{content:'';width:2px;height:16px;background:#888;border-radius:2px}
+.hd.l{left:0;border-radius:6px 0 0 6px}.hd.r{right:0;border-radius:0 6px 6px 0}
+.tx{touch-action:none}
+.tx.on{outline:2px solid #fff}
+.ov{background:#7c3aed}
