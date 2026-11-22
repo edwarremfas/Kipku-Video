@@ -11,20 +11,20 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
+<header class="top">
 <h1>Klipku</h1>
-<button id="imp">Tambah video</button>
-<select id="ar" aria-label="Rasio layar" style="width:auto"><option value="1280x720">16:9</option><option value="720x1280">9:16</option><option value="1080x1080">1:1</option><option value="1080x1350">4:5</option></select><button id="sv">Simpan</button><button id="ld">Buka proyek</button><button id="un">Urungkan</button><button id="re">Ulangi</button><button id="exp" class="p">Ekspor</button><input id="mf" type="file" accept="audio/*" multiple hidden><input id="of" type="file" accept="image/*" hidden>
-<input id="file" type="file" accept="video/*" multiple hidden>
+<select id="ar" aria-label="Rasio layar"><option value="1280x720">16:9</option><option value="720x1280">9:16</option><option value="1080x1080">1:1</option><option value="1080x1350">4:5</option></select>
+<button id="sv">Simpan</button><button id="ld">Buka</button><button id="exp" class="p">Ekspor</button>
+<input id="file" type="file" accept="video/*,image/*" multiple hidden><input id="mf" type="file" accept="audio/*" multiple hidden><input id="of" type="file" accept="image/*" hidden>
 </header>
-<main>
-<section>
-<canvas id="cv" width="1280" height="720"></canvas>
-<div class="bar"><button id="pl" aria-label="Putar atau jeda">Putar</button><span id="tm">0:00.0 / 0:00.0</span></div>
-</section>
-<aside class="pn" id="in"><h2>Pengaturan</h2><div class="em">Tambahkan video untuk mulai mengedit.</div></aside>
-</main>
-<div id="tw"><div class="rw" id="rw"><div class="em">Linimasa kosong. Pilih "Tambah video".</div></div></div>
+<main class="pv"><canvas id="cv" width="1280" height="720"></canvas></main>
+<div class="ctl"><span id="tm">0:00.0 / 0:00.0</span><button id="zo" class="ic" aria-label="Perkecil linimasa">−</button><button id="zi" class="ic" aria-label="Perbesar linimasa">+</button><button id="un" class="ic" aria-label="Urungkan">↶</button><button id="re" class="ic" aria-label="Ulangi">↷</button><button id="pl" class="ic p" aria-label="Putar atau jeda">▶</button></div>
+<div id="twrap"><div id="phf"></div><div id="tw"><div class="rw" id="rw"></div></div><button id="imp" class="add" aria-label="Tambah video atau foto">+</button></div>
+<nav id="tb">
+<button id="tsp"><span>✂</span>Potong</button><button id="tdl"><span>✖</span>Hapus</button>
+<button data-tab="edit"><span>✎</span>Edit</button><button data-tab="filter"><span>◐</span>Filter</button><button data-tab="efek"><span>✦</span>Efek</button><button data-tab="audio"><span>♪</span>Audio</button><button data-tab="teks"><span>T</span>Teks</button><button data-tab="overlay"><span>▣</span>Overlay</button>
+</nav>
+<div id="sheet"><div class="sh"><b id="stt">Edit</b><button id="sx">Selesai</button></div><aside id="in" data-tab="edit"></aside></div>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body>

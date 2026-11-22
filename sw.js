@@ -1,6 +1,6 @@
 // Service worker Klipku: aplikasi bisa dibuka tanpa internet setelah kunjungan pertama.
 // Naikkan angka VERSI setiap kali Anda mengubah file aplikasi agar cache lama diganti.
-const VERSI = 'klipku-v2';
+const VERSI = 'klipku-v3';
 const ASET = [
   './',
   'index.html',

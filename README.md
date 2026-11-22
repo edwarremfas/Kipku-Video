@@ -4,6 +4,8 @@ Editor video gratis yang berjalan di browser. Tanpa watermark, tanpa akun, tanpa
 
 ## Fitur
 
+- Ruang kerja ala editor ponsel: pratinjau di atas, linimasa dengan thumbnail dan playhead di tengah, bilah alat di bawah
+- Video dan foto sebagai klip; tombol Potong dan Hapus langsung di bilah alat
 - Beberapa klip di linimasa: potong, pisah, geser urutan, hapus
 - Kecepatan 0,5x sampai 2x, volume, memudar, cermin, isi layar penuh
 - Filter siap pakai dan pengatur kecerahan, kontras, saturasi
