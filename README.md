@@ -29,6 +29,10 @@ Buka `index.html` di browser (disarankan Chrome atau Edge desktop). Tidak ada ya
 3. Pada **Source**, pilih branch `main` dan folder `/ (root)`, lalu simpan.
 4. Setelah beberapa menit, situs tayang di `https://NAMA-ANDA.github.io/NAMA-REPO/`.
 
+## Pasang sebagai aplikasi (PWA)
+
+Setelah situs tayang lewat HTTPS (GitHub Pages sudah HTTPS), buka di Chrome atau Edge lalu pilih **Instal** di bilah alamat, atau **Tambahkan ke layar utama** di ponsel. Setelah kunjungan pertama, Klipku bisa dibuka tanpa internet. Saat mengubah file aplikasi, naikkan `VERSI` di `sw.js` agar cache lama diganti.
+
 ## Catatan
 
 - Ekspor direkam secara real-time: video 1 menit butuh sekitar 1 menit.
