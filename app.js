@@ -1,14 +1,14 @@
 const $=s=>document.querySelector(s);
 const cv=$('#cv'),cx=cv.getContext('2d'),V=document.createElement('video');
 V.playsInline=true;V.preload='auto';
-const TW=$('#tw'),TH={},OVV={};let us=0,lastSet=0,foc=null,tbm='main',pickMode='main';const FILES={},IM={},OC=document.createElement('canvas'),ox=OC.getContext('2d',{willReadFrequently:true}),hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const PRE={Asli:[100,100,100],Cerah:[110,105,130],Sinematik:[95,120,85],'Hitam putih':[100,110,0],Pudar:[105,85,70]};let BG='#000000',ovs=[],W=1280,H=720,AS=[],undo=[],redo=[],clips=[],texts=[],sel=null,t=0,playing=false,cur=null,last=0,uid=1,PX=50,ac=null,dest=null,rec=null,chunks=[],mime='';
+const TW=$('#tw'),TH={},OVV={};let us=0,lastSet=0,foc=null,tbm='main',pickMode='main',muteAll=false;const vl=c=>muteAll?0:(c.vol==null?1:c.vol);const FILES={},IM={},OC=document.createElement('canvas'),ox=OC.getContext('2d',{willReadFrequently:true}),hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const PRE={Asli:[100,100,100],Cerah:[110,105,130],Sinematik:[95,120,85],'Hitam putih':[100,110,0],Pudar:[105,85,70]};let BG='#000000',ovs=[],W=1280,H=720,AS=[],undo=[],redo=[],clips=[],texts=[],sel=null,t=0,playing=false,cur=null,last=0,uid=1,PX=50,ac=null,dest=null,rec=null,chunks=[],mime='';
 const fmt=s=>{s=Math.max(0,s);return Math.floor(s/60)+':'+(s%60).toFixed(1).padStart(4,'0')};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const len=c=>(c.out-c.in)/c.speed;
 const total=()=>clips.reduce((a,c)=>a+len(c),0);
 function loc(x){let a=0;for(const c of clips){const l=len(c);if(x<a+l)return{c,off:x-a};a+=l}const c=clips[clips.length-1];return c?{c,off:len(c)}:null}
 function seekTo(c,off){
-  if(c.photo){cur=c;V.pause();return}const tt=c.in+off*c.speed;V.volume=c.vol==null?1:c.vol;
+  if(c.photo){cur=c;V.pause();return}const tt=c.in+off*c.speed;V.volume=vl(c);
   if(cur&&cur!==c&&cur.url===c.url){cur=c;V.playbackRate=c.speed;V.currentTime=tt;return}
   if(cur!==c){cur=c;V.src=c.url;V.onloadedmetadata=()=>{V.playbackRate=c.speed;V.currentTime=tt;if(playing)V.play().catch(()=>{})}}
   else{V.playbackRate=c.speed;V.currentTime=tt}
@@ -35,7 +35,7 @@ function tick(ts){
       const L=loc(t);
       if(L.c!==cur)seekTo(L.c,L.off);
       else if(!L.c.photo&&Math.abs(V.currentTime-(L.c.in+L.off*L.c.speed))>.4)V.currentTime=L.c.in+L.off*L.c.speed;
-      if(!L.c.photo){if(V.paused)V.play().catch(()=>{});V.volume=L.c.vol==null?1:L.c.vol}tickA();
+      if(!L.c.photo){if(V.paused)V.play().catch(()=>{});V.volume=vl(L.c)}tickA();
     }
   }
   last=ts;draw();requestAnimationFrame(tick);
@@ -87,9 +87,9 @@ function draw(){
   if(performance.now()-us>250&&Math.abs(TW.scrollLeft-t*PX)>1.5){TW.scrollLeft=t*PX;lastSet=TW.scrollLeft}updSB();
 }
 $('#imp').onclick=()=>openPick('main');
-$('#file').onchange=e=>{
-  $('#pick').hidden=true;if(pickMode==='ov'){addOvFiles(e.target.files);e.target.value='';return}
-  for(const f of e.target.files){
+function importFiles(fl){
+  if(fl.length)snap();
+  for(const f of fl){
     const key='f'+Date.now()+Math.random().toString(36).slice(2,6),u=URL.createObjectURL(f),v=document.createElement('video');FILES[key]=f;
     if(f.type.startsWith('image/')){const c={id:uid++,key,name:f.name,url:u,photo:true,in:0,out:5,dur:60,speed:1,vol:1,fade:0,fill:false,flip:false,f:{b:100,c:100,s:100}};clips.push(c);sel=c;renderTL();renderIn();if(clips.length===1)sync();continue}
     v.preload='metadata';v.src=u;
@@ -98,15 +98,15 @@ $('#file').onchange=e=>{
       clips.push(c);sel=c;renderTL();renderIn();if(clips.length===1)sync();
     };
   }
-  e.target.value='';
-};
+  if(fl.length)toast(fl.length+' berkas ditambahkan',true);
+}
 function renderTL(){
   const rw=$('#rw'),half=TW.clientWidth/2,TWd=56;
   if(!clips.length){rw.style.marginLeft=half+'px';rw.style.width='240px';rw.innerHTML='<div class="em" style="position:absolute;left:8px;top:22px;padding:0;white-space:nowrap">Tekan + untuk menambah video atau foto</div>';return}
   let a=0,h='';
   for(const c of clips){const l=len(c),w=Math.max(l*PX,24),th=TH[c.key];let tl='';for(let i=0,n=Math.ceil(w/TWd);i<n;i++){let u='';if(c.photo)u=c.url;else if(th&&th.u.length)u=th.u[Math.min(th.u.length-1,Math.round((c.in+(i*TWd/PX)*c.speed)/th.step))];tl+=`<i style="background-image:url('${u}')"></i>`}h+=`<div class="cl${isF('c',c.id)?' on':''}" data-c="${c.id}" style="left:${a*PX}px;width:${w}px">${tl}${isF('c',c.id)?'<span class="hd l" data-h="l"></span><span class="hd r" data-h="r"></span>':''}<b>${l.toFixed(1)} dtk</b></div>`;a+=l}
   for(const r of AS)h+=`<div class="tx au${isF('a',r.id)?' on':''}" data-aid="${r.id}" style="top:130px;height:22px;left:${r.start*PX}px;width:${Math.max((aEnd(r)-r.start)*PX,24)}px">${esc(r.name)}</div>`;for(const o of ovs)h+=`<div class="tx ov${isF('o',o.id)?' on':''}" data-oid="${o.id}" style="top:74px;height:22px;left:${o.s*PX}px;width:${Math.max(o.d*PX,24)}px">${esc(o.name)}</div>`;for(const x of texts)h+=`<div class="tx${isF('x',x.id)?' on':''}" data-t="${x.id}" style="left:${x.s*PX}px;width:${Math.max(x.d*PX,24)}px">${esc(x.tx)}</div>`;
-  rw.style.marginLeft=half+'px';rw.style.width=(a*PX+half+120)+'px';rw.innerHTML=h;
+  if(!AS.length)h+='<div class="ph" data-add="audio" style="top:130px">+ Tambah audio</div>';if(!texts.length)h+='<div class="ph" data-add="teks" style="top:100px">+ Tambah teks</div>';rw.style.marginLeft=half+'px';rw.style.width=(a*PX+half+120)+'px';rw.innerHTML=h;
 }
 const isF=(k,id)=>foc&&foc.k===k&&foc.id===id;
 function setFoc(k,id){foc=k?{k,id}:null;if(k==='c')sel=clips.find(c=>c.id==id)||sel;renderTL();renderTB();if(k==='c')renderIn()}
@@ -124,7 +124,7 @@ $('#rw').addEventListener('pointerdown',e=>{
   const r=b.getBoundingClientRect(),z=dk?(e.clientX-r.left<16?'l':(r.right-e.clientX<16?'r':'m')):'m',x0=e.clientX,s0=obj[sk],d0=dk?obj[dk]:0;
   e.preventDefault();snap();setFoc(k,obj.id);
   dragWin(ev=>{const dt=(ev.clientX-x0)/PX;if(z==='m')obj[sk]=Math.max(0,s0+dt);else if(z==='l'){const ns=Math.min(Math.max(0,s0+dt),s0+d0-.2);obj[dk]=d0-(ns-s0);obj[sk]=ns}else obj[dk]=Math.max(.2,d0+dt);renderTL();if(k==='a'&&!playing)syncOne(obj)},renderIn)});
-$('#rw').addEventListener('click',e=>{const c=e.target.closest('.cl');if(c&&!e.target.closest('.hd'))setFoc('c',+c.dataset.c)});
+$('#rw').addEventListener('click',e=>{const ad=e.target.closest('[data-add]');if(ad){if(ad.dataset.add==='audio')$('#mf').click();else addText();return}const c=e.target.closest('.cl');if(c&&!e.target.closest('.hd'))setFoc('c',+c.dataset.c)});
 TW.addEventListener('scroll',()=>{if(Math.abs(TW.scrollLeft-lastSet)<1.5)return;us=performance.now();lastSet=TW.scrollLeft;t=Math.min(Math.max(TW.scrollLeft/PX,0),total());if(!playing)sync()});
 TW.addEventListener('pointerdown',()=>{if(playing)pause()});
 function slider(label,k,min,max,step,val){return `<label>${label}<input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`}
@@ -185,7 +185,8 @@ function snap(){const s=JSON.stringify({clips,texts,ovs});if(undo[undo.length-1]
 function restore(s){const o=JSON.parse(s);clips=o.clips;texts=o.texts;ovs=o.ovs||[];sel=clips.find(c=>sel&&c.id===sel.id)||clips[0]||null;cur=null;t=Math.min(t,total());renderTL();renderIn();sync()}
 $('#un').onclick=()=>{if(!undo.length)return;redo.push(JSON.stringify({clips,texts,ovs}));restore(undo.pop())};
 $('#re').onclick=()=>{if(!redo.length)return;undo.push(JSON.stringify({clips,texts,ovs}));restore(redo.pop())};
-$('#ar').onchange=e=>{if(rec)return;[W,H]=e.target.value.split('x').map(Number);cv.width=W;cv.height=H};
+function setSize(){const[b,h]=$('#ar').value.split('x').map(Number),m=+$('#ql').value;W=Math.round(b*m/2)*2;H=Math.round(h*m/2)*2;cv.width=W;cv.height=H}
+$('#ar').onchange=()=>{if(!rec)setSize()};$('#ql').onchange=()=>{if(!rec)setSize()};
 $('#mf').onchange=e=>{for(const f of e.target.files){const key='f'+Date.now()+Math.random().toString(36).slice(2,6);FILES[key]=f;mkA(URL.createObjectURL(f),f.name,key,t,0,null,1,.6)}renderIn();renderTL();e.target.value=''};
 
 const idb=()=>new Promise((ok,no)=>{const r=indexedDB.open('klipku',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
@@ -196,7 +197,7 @@ $('#sv').onclick=async()=>{
   for(const r of AS)used.add(r.key);for(const o of ovs)used.add(o.key);
   for(const k of used)if(FILES[k])files[k]=FILES[k];
   try{
-    await kvSet('proj',{clips:clips.map(c=>({...c,url:''})),texts,ovs:ovs.map(o=>({...o,url:''})),BG,W,H,uid,files,aud:AS.map(r=>({key:r.key,name:r.name,start:r.start,inn:r.inn,out:r.out,rate:r.rate,vol:r.vol}))});
+    await kvSet('proj',{clips:clips.map(c=>({...c,url:''})),texts,ovs:ovs.map(o=>({...o,url:''})),BG,ar:$('#ar').value,ql:$('#ql').value,muteAll,uid,files,aud:AS.map(r=>({key:r.key,name:r.name,start:r.start,inn:r.inn,out:r.out,rate:r.rate,vol:r.vol}))});
     b.textContent='Tersimpan';
   }catch(e){alert('Gagal menyimpan. Penyimpanan browser mungkin penuh atau diblokir. '+(e.message||e))}
   setTimeout(()=>b.textContent='Simpan',1500);
@@ -207,8 +208,8 @@ $('#ld').onclick=async()=>{
     if(!p){alert('Belum ada proyek tersimpan.');return}
     pause();Object.assign(FILES,p.files);
     const U={},url=k=>U[k]||(U[k]=URL.createObjectURL(FILES[k]));
-    clips=p.clips.map(c=>({...c,url:url(c.key)}));for(const k of new Set(p.clips.map(c=>c.key))){const c0=p.clips.find(c=>c.key===k);if(!c0.photo&&!TH[k])thumbs(k,url(k),c0.dur)}texts=p.texts;ovs=(p.ovs||[]).map(o=>({...o,url:url(o.key)}));BG=p.BG||'#000000';for(const k in IM)delete IM[k];for(const k in OVV)delete OVV[k];uid=p.uid;W=p.W;H=p.H;
-    cv.width=W;cv.height=H;$('#ar').value=W+'x'+H;
+    clips=p.clips.map(c=>({...c,url:url(c.key)}));for(const k of new Set(p.clips.map(c=>c.key))){const c0=p.clips.find(c=>c.key===k);if(!c0.photo&&!TH[k])thumbs(k,url(k),c0.dur)}texts=p.texts;ovs=(p.ovs||[]).map(o=>({...o,url:url(o.key)}));BG=p.BG||'#000000';for(const k in IM)delete IM[k];for(const k in OVV)delete OVV[k];uid=p.uid;
+    $('#ar').value=p.ar||'1280x720';$('#ql').value=p.ql||'1';muteAll=!!p.muteAll;setSize();updMt();
     AS.forEach(r=>r.a.pause());AS=[];for(const r of [].concat(p.aud||[]))mkA(url(r.key),r.name||'Audio',r.key,r.start,r.inn,r.out!=null?r.out:(r.end>=0?r.inn+(r.end-r.start)*r.rate:null),r.rate,r.vol!=null?r.vol:.6);
     sel=clips[0]||null;cur=null;t=0;undo=[];redo=[];foc=null;tbm='main';renderTB();renderTL();renderIn();sync();
   }catch(e){alert('Gagal membuka proyek: '+(e.message||e))}
@@ -219,16 +220,12 @@ $('#exp').onclick=async()=>{
   mime=['video/webm;codecs=vp9,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m))||'';
   audio();
   const st=cv.captureStream(30);dest.stream.getAudioTracks().forEach(a=>st.addTrack(a));
-  chunks=[];rec=new MediaRecorder(st,mime?{mimeType:mime,videoBitsPerSecond:6e6}:{});
+  chunks=[];rec=new MediaRecorder(st,mime?{mimeType:mime,videoBitsPerSecond:Math.round(6e6*W*H/921600)}:{});
   rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
   rec.onstop=async()=>{
     rec=null;$('#exp').textContent='Ekspor';
     const blob=new Blob(chunks,{type:mime||'video/webm'}),ext=mime.includes('mp4')?'mp4':'webm';
-    try{
-      const d=(window.claude&&claude.use)?await claude.use('downloads'):null;
-      if(d){await d.save({filename:'klipku.'+ext,data:blob})}
-      else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='klipku.'+ext;document.body.appendChild(a);a.click();a.remove()}
-    }catch(err){if(!err||err.code!=='declined')alert('Gagal menyimpan: '+((err&&err.message)||err))}
+    await saveBlob(blob,'klipku.'+ext);
   };
   $('#exp').textContent='Merekam…';t=0;rec.start();play();
 };
@@ -272,10 +269,23 @@ function dupFoc(){
   else if(foc.k==='x'){const o=texts.find(a=>a.id===foc.id);if(!o)return;const n={...o,id:uid++,px:Math.min(.95,(o.px==null?.5:o.px)+.05),py:Math.min(.95,(o.py==null?.86:o.py)-.06)};texts.push(n);setFoc('x',n.id)}
   renderIn();
 }
-function openPick(m){pickMode=m;$('#pkt').textContent=m==='ov'?'Tambah overlay':'Tambah ke linimasa';$('#pick').hidden=false}
+let PK=[],tt0=0;
+function openPick(m){pickMode=m;PK=[];$('#pkt').textContent=m==='ov'?'Tambah overlay':'Tambah ke linimasa';renderPick();$('#pick').hidden=false}
+function renderPick(){
+  $('#pkg').innerHTML=PK.map((x,i)=>{const m=x.f.type.startsWith('video/')?`<video src="${x.u}#t=0.1" muted playsinline preload="metadata"></video>`:`<img src="${x.u}" alt="">`;return `<div class="pi">${m}<button data-r="${i}" aria-label="Buang">−</button></div>`}).join('');
+  const b=$('#pka');b.textContent='Tambah ('+PK.length+')';b.disabled=!PK.length;
+}
+$('#pkg').onclick=e=>{const b=e.target.closest('[data-r]');if(b){PK.splice(+b.dataset.r,1);renderPick()}};
 $('#pkx').onclick=()=>$('#pick').hidden=true;
 $('#pkv').onclick=()=>{$('#file').accept='video/*';$('#file').click()};
 $('#pkf').onclick=()=>{$('#file').accept='image/*';$('#file').click()};
+$('#file').onchange=e=>{for(const f of e.target.files)PK.push({f,u:URL.createObjectURL(f)});e.target.value='';renderPick()};
+$('#pka').onclick=()=>{if(!PK.length)return;const fs=PK.map(x=>x.f);PK=[];$('#pick').hidden=true;if(pickMode==='ov')addOvFiles(fs);else importFiles(fs)};
+function toast(m,undoable){const el=$('#toast');el.innerHTML=esc(m)+(undoable?' <button id="tu">Urungkan</button>':'');el.hidden=false;clearTimeout(tt0);tt0=setTimeout(()=>{el.hidden=true},4000);if(undoable)$('#tu').onclick=()=>{$('#un').click();el.hidden=true}}
+async function saveBlob(blob,name){try{const d=(window.claude&&claude.use)?await claude.use('downloads'):null;if(d)await d.save({filename:name,data:blob});else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}}catch(err){if(!err||err.code!=='declined')alert('Gagal menyimpan: '+((err&&err.message)||err))}}
+function updMt(){const b=$('#mt');b.classList.toggle('off',muteAll);b.lastChild.textContent=muteAll?'Bisu':'Suara'}
+$('#mt').onclick=()=>{muteAll=!muteAll;const L=loc(t);if(L&&!L.c.photo)V.volume=vl(L.c);updMt()};
+$('#cvb').onclick=()=>{draw();cv.toBlob(async b=>{await saveBlob(b,'sampul-klipku.jpg');toast('Sampul disimpan')},'image/jpeg',.92)};
 function addOvFiles(fl){
   for(const f of fl){
     snap();const key='f'+Date.now()+Math.random().toString(36).slice(2,6),url=URL.createObjectURL(f);FILES[key]=f;

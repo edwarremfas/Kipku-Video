@@ -14,14 +14,15 @@
 <header class="top">
 <h1>Klipku</h1>
 <select id="ar" aria-label="Rasio layar"><option value="1280x720">16:9</option><option value="720x1280">9:16</option><option value="1080x1080">1:1</option><option value="1080x1350">4:5</option></select>
-<button id="sv">Simpan</button><button id="ld">Buka</button><button id="exp" class="p">Ekspor</button>
+<button id="sv">Simpan</button><button id="ld">Buka</button><select id="ql" aria-label="Kualitas ekspor"><option value=".75">SD</option><option value="1" selected>HD</option><option value="1.5">Full HD</option></select><button id="exp" class="p">Ekspor</button>
 <input id="file" type="file" accept="video/*,image/*" multiple hidden><input id="mf" type="file" accept="audio/*" multiple hidden>
 </header>
 <main class="pv"><canvas id="cv" width="1280" height="720"></canvas><div id="sb" hidden><button class="bx bx1" data-h="x" aria-label="Hapus">✕</button><button class="bx bx2" data-h="d" aria-label="Duplikat">⧉</button><button class="bx bx3" data-h="r" aria-label="Ubah ukuran">⤢</button></div></main>
 <div class="ctl"><span id="tm">0:00.0 / 0:00.0</span><button id="zo" class="ic" aria-label="Perkecil linimasa">−</button><button id="zi" class="ic" aria-label="Perbesar linimasa">+</button><button id="un" class="ic" aria-label="Urungkan">↶</button><button id="re" class="ic" aria-label="Ulangi">↷</button><button id="pl" class="ic p" aria-label="Putar atau jeda">▶</button></div>
-<div id="twrap"><div id="phf"></div><div id="tw"><div class="rw" id="rw"></div></div><button id="imp" class="add" aria-label="Tambah video atau foto">+</button></div>
+<div id="twrap"><div id="lc"><button id="mt"><span>♪</span>Suara</button><button id="cvb"><span>▤</span>Sampul</button></div><div id="phf"></div><div id="tw"><div class="rw" id="rw"></div></div><button id="imp" class="add" aria-label="Tambah video atau foto">+</button></div>
 <nav id="tb"></nav>
-<div id="pick" hidden><div class="pk"><b id="pkt">Tambah ke linimasa</b><div class="g2"><button id="pkv"><span>▶</span>Video</button><button id="pkf"><span>▣</span>Foto</button></div><button id="pkx">Batal</button></div></div>
+<div id="pick" hidden><div class="pk"><div class="ph2"><b id="pkt">Tambah ke linimasa</b><button id="pkx">Tutup</button></div><div class="g2"><button id="pkv"><span>▶</span>Pilih video</button><button id="pkf"><span>▣</span>Pilih foto</button></div><div id="pkg" class="pkg"></div><button id="pka" class="p" disabled>Tambah (0)</button></div></div>
+<div id="toast" hidden></div>
 <div id="sheet"><div class="sh"><b id="stt">Edit</b><button id="sx">Selesai</button></div><aside id="in" data-tab="edit"></aside></div>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>

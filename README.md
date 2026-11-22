@@ -5,7 +5,8 @@ Editor video gratis yang berjalan di browser. Tanpa watermark, tanpa akun, tanpa
 ## Fitur
 
 - Ruang kerja ala editor ponsel: pratinjau di atas, linimasa dengan thumbnail dan playhead di tengah, bilah alat di bawah
-- Tombol + memberi pilihan Video atau Foto
+- Tombol + membuka pemilih media: pilih banyak video dan foto, lihat pratinjau, lalu tekan Tambah (n); ada tombol Urungkan sesudah menambah
+- Bisukan suara klip, simpan sampul sebagai JPG, dan kualitas ekspor SD, HD, atau Full HD
 - Bilah alat berubah sesuai item yang dipilih; ujung klip bisa ditarik untuk memotong
 - Overlay (gambar atau video) bisa digeser, diubah ukuran, diduplikat, dan dipotong langsung di pratinjau; teks juga bisa digeser
 - Video dan foto sebagai klip; tombol Potong dan Hapus langsung di bilah alat
